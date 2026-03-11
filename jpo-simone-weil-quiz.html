@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JPO Lycée Simone Weil Paris 3 – Quiz Espagnol</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #C8102E;
+    --yellow: #F4C542;
+    --dark: #1A1A2E;
+    --light: #FDF6EC;
+    --accent: #E8501A;
+    --green: #27ae60;
+    --wrong: #e74c3c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--light); color: var(--dark); min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    background: var(--red);
+    color: white;
+    padding: 26px 100px 20px;
+    text-align: center;
+    position: relative;
+  }
+  .flag-left, .flag-right {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    font-size: 3rem; line-height: 1;
+  }
+  .flag-left  { left: 20px; }
+  .flag-right { right: 20px; }
+  header .subtitle {
+    font-size: .72rem; letter-spacing: .16em;
+    text-transform: uppercase; opacity: .92; margin-bottom: 7px;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.1rem, 4vw, 1.75rem);
+    font-weight: 900; line-height: 1.25;
+  }
+  .badge {
+    display: inline-block; background: var(--yellow); color: var(--dark);
+    font-weight: 700; font-size: .68rem; letter-spacing: .08em;
+    padding: 4px 14px; border-radius: 20px; margin-top: 10px; text-transform: uppercase;
+  }
+
+  .container { max-width: 680px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  /* QR */
+  .qr-section {
+    display: flex; align-items: center; gap: 20px;
+    background: white; border-radius: 16px; padding: 18px 20px;
+    margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,.07);
+    border-left: 5px solid var(--yellow);
+  }
+  .qr-box {
+    flex-shrink: 0; width: 116px; height: 116px;
+    background: #f8f8f8; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .qr-box img { width: 116px; height: 116px; display: block; }
+  .qr-info h2 { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: 5px; }
+  .qr-info p  { font-size: .8rem; color: #555; line-height: 1.5; }
+  .qr-note    { font-size: .7rem; color: #999; margin-top: 5px; font-style: italic; }
+
+  /* INTRO */
+  .intro { background: var(--dark); color: white; border-radius: 16px; padding: 18px 22px; margin-bottom: 24px; }
+  .intro h2 { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--yellow); margin-bottom: 7px; }
+  .intro p   { font-size: .87rem; line-height: 1.6; opacity: .92; }
+
+  /* PROGRESS */
+  .progress-label { font-size: .75rem; color: #888; text-align: right; margin-bottom: 5px; }
+  .progress-bar-wrap { background: #ddd; border-radius: 8px; height: 7px; margin-bottom: 20px; overflow: hidden; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, var(--red), var(--accent)); border-radius: 8px; transition: width .4s ease; width: 0%; }
+
+  /* QUESTION */
+  .question-card {
+    background: white; border-radius: 16px;
+    padding: 20px 20px 18px; margin-bottom: 18px;
+    box-shadow: 0 3px 16px rgba(0,0,0,.06);
+  }
+  .q-number {
+    display: inline-block; background: var(--red); color: white;
+    font-weight: 700; font-size: .68rem; padding: 2px 11px;
+    border-radius: 20px; margin-bottom: 9px; letter-spacing: .04em;
+  }
+  .q-text { font-size: .97rem; font-weight: 600; line-height: 1.45; margin-bottom: 14px; }
+  .choices { display: flex; flex-direction: column; gap: 9px; }
+  .choice {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 15px; border: 2px solid #e5e5e5; border-radius: 10px;
+    cursor: pointer; font-size: .88rem; background: white;
+    width: 100%; text-align: left;
+    transition: border-color .15s, background .15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .choice:not([disabled]):hover { border-color: var(--red); background: #fff5f5; }
+  .choice.correct { border-color: var(--green) !important; background: #edfbf3 !important; color: #1a5c35; font-weight: 600; }
+  .choice.wrong   { border-color: var(--wrong)  !important; background: #fdf0f0 !important; color: #8b1a1a; }
+  .choice .letter {
+    width: 27px; height: 27px; border-radius: 50%;
+    background: #f0f0f0; border: 2px solid #ccc;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .75rem; flex-shrink: 0; transition: all .15s;
+  }
+  .choice.correct .letter { background: var(--green); border-color: var(--green); color: white; }
+  .choice.wrong   .letter { background: var(--wrong);  border-color: var(--wrong);  color: white; }
+  .explanation {
+    display: none; margin-top: 11px; padding: 10px 13px;
+    background: #fffbe8; border-left: 4px solid var(--yellow);
+    border-radius: 8px; font-size: .82rem; line-height: 1.55; color: #555;
+  }
+  .explanation.show { display: block; }
+
+  /* SCORE */
+  .score-section {
+    display: none; text-align: center; padding: 36px 20px;
+    background: white; border-radius: 20px;
+    box-shadow: 0 6px 28px rgba(0,0,0,.09); margin-top: 8px;
+  }
+  .score-section.show { display: block; }
+  .score-emoji  { font-size: 3.2rem; margin-bottom: 10px; }
+  .score-section h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 4px; }
+  .score-number { font-size: 3rem; font-weight: 900; color: var(--red); font-family: 'Playfair Display', serif; line-height: 1; margin: 12px 0 8px; }
+  .score-section p { font-size: .88rem; color: #666; margin-bottom: 22px; }
+  .retry-btn {
+    background: var(--red); color: white; border: none;
+    padding: 12px 30px; border-radius: 30px;
+    font-size: .93rem; font-weight: 600; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: background .2s;
+  }
+  .retry-btn:hover { background: var(--accent); }
+
+  footer { text-align: center; font-size: .7rem; color: #bbb; padding: 18px; }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="flag-left">🇪🇸</span>
+  <span class="flag-right">🇪🇺</span>
+  <div class="subtitle">Journée Portes Ouvertes · Lycée Simone Weil · Paris 3<sup>e</sup></div>
+  <h1>Quiz : L'Espagnol dans le Monde</h1>
+  <div class="badge">⭐ Section Espagnol — Teste tes connaissances !</div>
+</header>
+
+<div class="container">
+
+  <div class="qr-section">
+    <div class="qr-box">
+      <img id="qr-img" src="" alt="QR Code" />
+    </div>
+    <div class="qr-info">
+      <h2>📲 QR Code Permanent</h2>
+      <p>Scanne ce code avec ton téléphone pour accéder au quiz et le partager.</p>
+      <p class="qr-note">Le QR pointe sur l'URL de cette page une fois hébergée en ligne.</p>
+    </div>
+  </div>
+
+  <div class="intro">
+    <h2>🌍 Le saviez-vous ?</h2>
+    <p>L'espagnol est la <strong>2e langue maternelle la plus parlée</strong> dans le monde, avec plus de <strong>500 millions</strong> de locuteurs natifs répartis dans <strong>21 pays</strong>. Réponds aux 10 questions pour tester tes connaissances !</p>
+  </div>
+
+  <div class="progress-label" id="progress-label">Question 1 / 10</div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+
+  <div id="quiz-container"></div>
+
+  <div class="score-section" id="score-section">
+    <div class="score-emoji" id="score-emoji">🎉</div>
+    <h2>Tes résultats</h2>
+    <div class="score-number" id="score-number">0/10</div>
+    <p id="score-msg"></p>
+    <button class="retry-btn" onclick="restartQuiz()">🔄 Recommencer le quiz</button>
+  </div>
+
+</div>
+
+<footer>Quiz créé pour la JPO du Lycée Simone Weil · Paris 3<sup>e</sup> · Section Espagnol</footer>
+
+<script>
+// 10 questions vérifiées d'après la transcription vidéo
+const questions = [
+  {
+    q: "Quel est le pays le plus prisé par les étudiants Erasmus chaque année ?",
+    choices: ["La France", "L'Allemagne", "L'Italie", "L'Espagne"],
+    answer: 3,
+    explain: "L'Espagne est le pays le plus prisé avec plus de 42 000 étudiants Erasmus par an, devant l'Allemagne (26 000) et la France (25 000)."
+  },
+  {
+    q: "Quelle est la 2e langue maternelle la plus parlée dans le monde, juste après le chinois mandarin ?",
+    choices: ["L'anglais", "L'hindi", "L'espagnol", "L'arabe"],
+    answer: 2,
+    explain: "L'espagnol est la 2e langue maternelle la plus parlée au monde, juste après le chinois mandarin, avec environ 500 millions de locuteurs natifs."
+  },
+  {
+    q: "Combien de pays ont l'espagnol comme langue officielle dans le monde ?",
+    choices: ["12 pays", "17 pays", "21 pays", "29 pays"],
+    answer: 2,
+    explain: "L'espagnol est la langue officielle de 21 pays, essentiellement en Europe et sur le continent américain."
+  },
+  {
+    q: "Quel pays compte le plus grand nombre de locuteurs espagnols natifs ?",
+    choices: ["L'Espagne", "La Colombie", "L'Argentine", "Le Mexique"],
+    answer: 3,
+    explain: "Le Mexique est en tête avec plus de 130 millions de locuteurs natifs, loin devant la Colombie (52 millions) et l'Espagne (47 millions)."
+  },
+  {
+    q: "Combien de personnes ont l'espagnol comme langue maternelle en Colombie ?",
+    choices: ["Plus de 30 millions", "Plus de 42 millions", "Plus de 52 millions", "Plus de 70 millions"],
+    answer: 2,
+    explain: "La Colombie compte plus de 52 millions de locuteurs natifs de l'espagnol, ce qui en fait le 2e pays hispanophone mondial."
+  },
+  {
+    q: "Aux États-Unis, combien de personnes ont l'espagnol comme langue maternelle ?",
+    choices: ["21 millions", "41 millions", "55 millions", "62 millions"],
+    answer: 1,
+    explain: "Les États-Unis comptent 41 millions d'hispanophones de naissance, ce qui en fait le 5e pays hispanophone du monde, même si l'espagnol n'y est pas langue officielle."
+  },
+  {
+    q: "En Afrique, quel est le seul pays ayant l'espagnol comme langue officielle ?",
+    choices: ["Le Maroc", "Le Sénégal", "L'Angola", "La Guinée équatoriale"],
+    answer: 3,
+    explain: "Seule la Guinée équatoriale possède l'espagnol comme langue officielle sur le continent africain."
+  },
+  {
+    q: "Dans combien de pays l'espagnol est-il enseigné comme langue étrangère, avec plus de 23 millions d'étudiants ?",
+    choices: ["55 pays", "80 pays", "111 pays", "150 pays"],
+    answer: 2,
+    explain: "Dans 111 pays, plus de 23 millions d'étudiants choisissent l'espagnol comme langue étrangère."
+  },
+  {
+    q: "Comment s'appelle l'institution espagnole chargée de promouvoir la langue et la culture espagnoles dans le monde ?",
+    choices: ["Casa Real", "Alliance Hispanique", "Instituto Cervantes", "Fundación España"],
+    answer: 2,
+    explain: "L'Instituto Cervantes, présent dans 88 villes du monde, est l'équivalent de l'Alliance française pour le français ou de l'Institut Goethe pour l'allemand."
+  },
+  {
+    q: "Sur les réseaux sociaux, à quelle place se trouve l'espagnol parmi les langues les plus utilisées ?",
+    choices: ["2e langue", "3e langue", "4e langue", "5e langue"],
+    answer: 1,
+    explain: "L'espagnol est la 3e langue la plus utilisée sur les réseaux sociaux, après l'anglais et le chinois."
+  }
+];
+
+let score = 0;
+let answered = 0;
+
+function buildQuiz() {
+  score = 0;
+  answered = 0;
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  updateProgress(0);
+
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'card-' + i;
+    const letters = ['A', 'B', 'C', 'D'];
+    const choicesHTML = q.choices.map((c, j) => `
+      <button class="choice" id="choice-${i}-${j}" onclick="answer(${i},${j})">
+        <span class="letter">${letters[j]}</span>${c}
+      </button>
+    `).join('');
+    card.innerHTML = `
+      <span class="q-number">Question ${i + 1} / 10</span>
+      <div class="q-text">${q.q}</div>
+      <div class="choices">${choicesHTML}</div>
+      <div class="explanation" id="expl-${i}">💡 ${q.explain}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function answer(qi, chosen) {
+  const q = questions[qi];
+  for (let j = 0; j < 4; j++) {
+    const btn = document.getElementById(`choice-${qi}-${j}`);
+    btn.setAttribute('disabled', 'true');
+    btn.onclick = null;
+    btn.style.cursor = 'default';
+    if (j === q.answer) btn.classList.add('correct');
+    else if (j === chosen) btn.classList.add('wrong');
+  }
+  document.getElementById(`expl-${qi}`).classList.add('show');
+  if (chosen === q.answer) score++;
+  answered++;
+  updateProgress(answered);
+  if (answered === questions.length) setTimeout(showScore, 700);
+}
+
+function updateProgress(n) {
+  document.getElementById('progress-bar').style.width = ((n / questions.length) * 100) + '%';
+  document.getElementById('progress-label').textContent =
+    n < questions.length ? `Question ${n + 1} / ${questions.length}` : 'Quiz terminé ✅';
+}
+
+function showScore() {
+  const s = document.getElementById('score-section');
+  s.classList.add('show');
+  document.getElementById('score-number').textContent = `${score}/10`;
+  let emoji = '😅', msg = 'Continue à réviser, tu vas progresser !';
+  if (score >= 9)      { emoji = '🏆'; msg = '¡Sobresaliente! Tu maîtrises parfaitement le sujet !'; }
+  else if (score >= 7) { emoji = '🥇'; msg = '¡Muy bien! Excellent résultat, chapeau !'; }
+  else if (score >= 5) { emoji = '😊'; msg = '¡Bien! Bonne base, encore un petit effort !'; }
+  else if (score >= 3) { emoji = '🙂'; msg = 'Pas mal pour commencer. Relis et retente !'; }
+  document.getElementById('score-emoji').textContent = emoji;
+  document.getElementById('score-msg').textContent = msg;
+  s.scrollIntoView({ behavior: 'smooth' });
+}
+
+function restartQuiz() {
+  document.getElementById('score-section').classList.remove('show');
+  buildQuiz();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// QR Code via api.qrserver.com — aucune bibliothèque JS requise
+(function () {
+  const pageURL = window.location.href;
+  const encoded = encodeURIComponent(pageURL);
+  const src = `https://api.qrserver.com/v1/create-qr-code/?size=116x116&data=${encoded}&color=1A1A2E&bgcolor=FFFFFF&margin=4&qzone=1`;
+  const img = document.getElementById('qr-img');
+  img.src = src;
+  img.onerror = function () {
+    img.parentElement.innerHTML = '<div style="font-size:.7rem;color:#aaa;text-align:center;padding:10px;line-height:1.4;">QR code<br>indisponible<br>hors ligne</div>';
+  };
+})();
+
+buildQuiz();
+</script>
+</body>
+</html>
